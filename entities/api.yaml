@@ -9,7 +9,7 @@ metadata:
       icon: api
 spec:
   type: openapi
-  system: heimdall
+  system: status-page
   owner: heimdall-team
   lifecycle: production
   paths:
