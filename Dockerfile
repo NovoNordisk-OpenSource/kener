@@ -60,6 +60,7 @@ COPY --chown=abc:abc src/lib/server /app/src/lib/server
 
 COPY --chown=abc:abc /config/monitors.yaml /app/config/monitors.yaml
 COPY --chown=abc:abc /config/site.yaml /app/config/site.yaml
+COPY --chown=abc:abc /config/server.yaml /app/config/server.yaml
 COPY --from=build --chown=abc:abc /app/build /app/build
 COPY --from=build --chown=abc:abc /app/main.js /app/main.js
 
