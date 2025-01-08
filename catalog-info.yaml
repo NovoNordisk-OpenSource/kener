@@ -8,8 +8,8 @@ metadata:
     - statuspage
     - uptime
   annotations:
-    backstage.io/techdocs-entity: system:default/heimdall
+    backstage.io/techdocs-entity: system:default/status-page
 spec:
   targets:
-    - ./entities/components.yaml
+    - ./entities/system.yaml
     - ./entities/api.yaml
