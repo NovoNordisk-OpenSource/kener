@@ -3,11 +3,17 @@ import { apiReference } from "@scalar/express-api-reference";
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import sitemap from "./sitemap.js";
+import Startup from "./src/lib/server/startup.js";
 import fs from "fs-extra";
+import knex from "knex";
+import knexOb from "./knexfile.js";
+
 const PORT = process.env.PORT || 3000;
+const base = process.env.KENER_BASE_PATH || "";
 
 const app = express();
+const db = knex(knexOb);
+
 app.use((req, res, next) => {
 	if (req.path.startsWith("/embed")) {
 		res.setHeader("Content-Security-Policy", "frame-ancestors *");
@@ -15,9 +21,11 @@ app.use((req, res, next) => {
 	res.setHeader("X-Powered-By", "Kener");
 	next();
 });
-app.get("/healthcheck", (req, res) => {
+app.get(base + "/healthcheck", (req, res) => {
 	res.end("ok");
 });
+//part /uploads server static files from static/uploads
+app.use(base + "/uploads", express.static("static/uploads"));
 
 try {
 	const openapiJSON = fs.readFileSync("./openapi.json", "utf-8");
@@ -48,13 +56,35 @@ try {
 } catch (e) {
 	console.warn("Error loading openapi.json, but that is okay.");
 }
-app.get("/sitemap.xml", (req, res) => {
-	res.setHeader("Content-Type", "application/xml");
-	res.end(sitemap);
-});
 
 app.use(handler);
 
-app.listen(PORT, () => {
+//migrations
+async function runMigrations() {
+	try {
+		console.log("Running migrations...");
+		await db.migrate.latest(); // Runs migrations to the latest state
+		console.log("Migrations completed successfully!");
+	} catch (err) {
+		console.error("Error running migrations:", err);
+	}
+}
+
+//seed
+async function runSeed() {
+	try {
+		console.log("Running seed...");
+		await db.seed.run(); // Runs seed to the latest state
+		console.log("Seed completed successfully!");
+	} catch (err) {
+		console.error("Error running seed:", err);
+	}
+}
+
+app.listen(PORT, async () => {
+	await runMigrations();
+	await runSeed();
+	await db.destroy();
+	Startup();
 	console.log("Kener is running on port " + PORT + "!");
 });
