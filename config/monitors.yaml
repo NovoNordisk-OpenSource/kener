@@ -8,7 +8,7 @@
   api:
     timeout: 4000
     method: GET
-    url: https://heimdall.dfplatformtool-prd.pub.azure.novonordisk.com/health/grafana
+    url: https://bifrost.heimdall.novonordisk.cloud/health/grafana
     eval: |
         (function(statusCode, responseTime, responseDataBase64){
         console.log(statusCode)
@@ -27,7 +27,7 @@
   api:
     timeout: 4000
     method: GET
-    url: https://heimdall.dfplatformtool-prd.pub.azure.novonordisk.com/health/otlp/http
+    url: https://bifrost.heimdall.novonordisk.cloud/health/otlp/http
     eval: |
         (function(statusCode, responseTime, responseDataBase64){
         console.log(statusCode)
